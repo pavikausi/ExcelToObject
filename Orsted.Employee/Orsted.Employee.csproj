@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Helper\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Orsted.Model\Orsted.Model.csproj" />
+    <ProjectReference Include="..\Orsted.Service\Orsted.Service.csproj" />
+  </ItemGroup>
+
+</Project>

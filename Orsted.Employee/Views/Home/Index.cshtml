@@ -1,0 +1,93 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+<div class="content-wrapper">
+    <section class="content">
+        <div class="box box-default">
+            <div class="box-header with-border">
+                <h3 class="box-title">Upload Employee List File</h3>
+            </div>
+            <div class="box-body">
+                <form id="upload_form" enctype="multipart/form-data" onsubmit="FormSubmit();return false;" class="form-horizontal"
+                      method="post">
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <input id="FileUpload_FormFile" type="file" name="FileUpload.FormFile" class="file-loading" />
+                        </div>
+                        <div class="col-md-6">
+                        </div>
+                    </div>
+                    <br />
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <button type="submit" id="upload" class="btn btn-primary">Upload</button>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 15px; display: none" id="divEmployeeTable">
+                        <div><b>Employee List</b><br /></div>
+                        <table class="table table-bordered table-condensed table-striped text-center" id="tblEmployee">
+                            <thead>
+                                <tr>
+                                    <th>Employee Number </th>
+                                    <th>First Name </th>
+                                    <th>Last Name </th>
+                                    <th>Employee Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+</div>
+
+@section Scripts
+{
+    <script>
+        async function FormSubmit() {
+            $('#divEmployeeTable').hide();
+            var formData = new FormData($('#upload_form')[0]);
+            formData.append('file', $('input[type=file]')[0].files[0]);
+            $("#tblEmployee tbody").html("");
+            $.ajax({
+                url: "/API/Employee/List",
+                type: "post",
+                cache: false,
+                contentType: false,
+                processData: false,
+                data: formData,
+                headers: {
+                    "Authorization": "Basic " + btoa("adminuser" + ":" + "passwordtest@1")
+                },
+                success: function (result) {
+                    var tblEmployee = $("#tblEmployee tbody");
+
+                    $.each(result, function (index, item) {
+                        var rows = $("<tr></tr>");
+                        var statusFont = item.status.toLowerCase() == "regular" ?
+                            "style=color:green;" : "style=color:yellow;";
+                        rows.html(("<td>" + item.number + "</td>")
+                            + " " + ("<td>" + item.firstName + "</td>")
+                            + " " + ("<td>" + item.lastName + "</td>")
+                            + " " + ("<td " + statusFont + ">" + item.status + "</td>"));
+                        tblEmployee.append(rows);
+                    })
+                    $('#divEmployeeTable').show();
+
+                },
+                error: function (request) {
+                    alert(request.responseText);
+                }
+            });
+        }
+    </script>
+}
